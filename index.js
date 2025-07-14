@@ -1,15 +1,19 @@
 const express= require("express");
+
 const app= express();
 
-app.get("/home",(req,res)=>{
-  
-    res.send("hello working")
-})
+app.get("/user",(req,res)=>{
+    res.send("hello world");
+});
 
-app.get("/",function(req,res){
-    res.send("<h1>welcome back...</h1>")
-})
+app.post("/user",(req,res)=>{
+    res.send("post request");
+});
 
-app.listen(8000,()=>{
-    console.log("Server is running on port 8000")
+app.delete("/user",(req,res)=>{
+    res.send("delete request");
+});
+
+app.listen(5000,()=>{
+    console.log("server is listening on port 5000")
 })
