@@ -33,7 +33,18 @@ app.get("/user", async(req, res) => {
     }
 });
 
-app.post("/user", async(req, res) => {
+app.get("/user/:id", async(req, res) => {
+   
+    try{
+        const user= await User.findById(req.params.id);
+        res.status(200).json({success:true,user})
+    }catch(e){
+       console.log(e);
+       res.status(400).json({success:false,message:"something went wrong"}) 
+    }
+});
+
+app.post("/user/signup", async(req, res) => {
   const { name, password, email } = req.body;
 
   if(!password || !email){
@@ -66,12 +77,33 @@ app.post("/user", async(req, res) => {
 
 });
 
-app.delete("/user", (req, res) => {
-  res.send("delete request");
+app.delete("/user/:id", async(req, res) => {
+   
+  try{
+    const id=req.params.id;    
+    const user= await User.findByIdAndDelete(id);
+    res.status(200).json({success:true,user});   
+
+  }catch(e){
+    console.log(e);
+    res.json({success:false,message:"something went wrong"})
+  }
+ 
 });
 
-app.patch("/user", (req, res) => {
-  res.send("patch request");
+app.patch("/user/:id", async(req, res) => {
+
+   try{
+        const id=req.params.id;
+        console.log(req.body)
+    
+        const user= await User.findByIdAndUpdate(id,req.body,{new:true});
+        res.status(200).json({success:true,user})
+    }catch(e){
+       console.log(e);
+       res.status(400).json({success:false,message:"something went wrong"}) 
+    }
+      
 });
 
 app.listen(5000, () => {
