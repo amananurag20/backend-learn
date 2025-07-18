@@ -77,6 +77,35 @@ app.post("/user/signup", async(req, res) => {
 
 });
 
+app.post("/user/login", async(req, res) => {
+
+  const { password, email } = req.body;
+
+  if(!password || !email){
+    return res.json({success:false,message:"password and email are required"})
+  }
+
+  const user=await User.findOne({email:email});
+  console.log(user);
+
+
+  if(!user){
+    return res.json({success:false,message:"user does not exists"});
+  }
+  
+  console.log(password,user.password)
+  const isPasswordCorrect= await bcrypt.compare(password,user.password);
+
+  if(!isPasswordCorrect){
+    return res.json({success:false,message:"wrong credentials"});
+
+  };
+
+  res.json({success:true,user,message:"login successful"});
+})
+
+
+
 app.delete("/user/:id", async(req, res) => {
    
   try{
