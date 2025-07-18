@@ -2,6 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt= require("bcrypt");
 const User = require("./models/User");
+const jwt= require("jsonwebtoken");
+const Movie = require("./models/Movie");
+
 
 const app = express();
 
@@ -80,6 +83,8 @@ app.post("/user/signup", async(req, res) => {
 app.post("/user/login", async(req, res) => {
 
   const { password, email } = req.body;
+  
+
 
   if(!password || !email){
     return res.json({success:false,message:"password and email are required"})
@@ -101,7 +106,13 @@ app.post("/user/login", async(req, res) => {
 
   };
 
-  res.json({success:true,user,message:"login successful"});
+  const token= jwt.sign({email:user.email,id:user._id,game:"cricket"},"secret",{
+    expiresIn:"10m"
+  })
+
+  res.setHeader("x-movie","abcd")
+
+  res.json({success:true,user,message:"login successful",token});
 })
 
 
@@ -134,6 +145,44 @@ app.patch("/user/:id", async(req, res) => {
     }
       
 });
+
+
+app.get("/movie",(req,res)=>{
+    
+   const token= req.headers.authorization.split(" ")[1];
+   console.log(token);   
+
+});
+
+
+
+app.post("/movie",async (req,res)=>{
+
+  
+    try{
+        const movie= await Movie.create(req.body);
+        res.status(200).json({success:true,movie})
+    }catch(e){
+       console.log(e);
+       res.status(400).json({success:false,message:"something went wrong"});
+
+    }
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(5000, () => {
   console.log("server is listening on port 5000");
