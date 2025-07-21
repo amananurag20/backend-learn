@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const cors = require('cors');
 const User = require("./models/User");
 const jwt = require("jsonwebtoken");
 const Movie = require("./models/Movie");
@@ -10,6 +11,11 @@ const app = express();
 
 app.use(express.json()); //json->js object
 app.use(express.urlencoded({ extended: false }));
+
+app.use(cors({
+  origin:["http://localhost:5173","http://localhost:5174"], 
+ 
+}))
 
 const dbConnect = async () => {
   try {
@@ -51,8 +57,9 @@ app.post("/user/signup", async (req, res) => {
   if (!password || !email) {
     res.json({ success: false, message: "password and email are required" });
   }
+  console.log(req.body)
 
-  const user = await User.find({ email: email });
+  const user = await User.findOne({ email: email });
 
   if (user) {
     return res.json({ success: false, message: "user already exists" });
