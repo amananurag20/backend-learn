@@ -6,6 +6,7 @@ const User = require("./models/User");
 const jwt = require("jsonwebtoken");
 const Movie = require("./models/Movie");
 const verifyToken = require("./middleware/verifyToken");
+require('dotenv').config();
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(cors({
 const dbConnect = async () => {
   try {
     await mongoose.connect(
-      "mongodb+srv://amananurag20:ZBdNKY4UUtAcciyt@cluster0.5prn1dy.mongodb.net/studyplanner"
+      process.env.MONGO_URL
     );
 
     console.log("database connected");
@@ -108,7 +109,7 @@ app.post("/user/login", async (req, res) => {
 
   const token = jwt.sign(
     { email: user.email, id: user._id, game: "cricket" },
-    "secret",
+   process.env.JWT_SECRET,
     {
       expiresIn: "30m",
     }
@@ -175,7 +176,7 @@ app.get("/check-token/:token",async(req,res)=>{
   const token=req.params.token;
   
   try{
-    const data= jwt.verify(token, "secret");
+    const data= jwt.verify(token, process.env.JWT_SECRET);
     res.json({success:true,message:"token is valid",})
   }catch(e){
    
