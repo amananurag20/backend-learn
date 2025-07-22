@@ -169,6 +169,23 @@ app.get("/get-current-user",verifyToken,async(req,res)=>{
   res.json({success:true,user})
 })
 
+
+app.get("/check-token/:token",async(req,res)=>{
+
+  const token=req.params.token;
+  
+  try{
+    const data= jwt.verify(token, "secret");
+    res.json({success:true,message:"token is valid",})
+  }catch(e){
+   
+    res.json({success:false,message:"invalid token"});
+
+  }
+
+
+})
+
 app.listen(5000, () => {
   console.log("server is listening on port 5000");
 });
